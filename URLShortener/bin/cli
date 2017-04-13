@@ -1,0 +1,28 @@
+
+puts "Please Enter Your Email"
+
+email = gets.chomp
+user = User.find_by(email: email)
+
+puts "Please choose something to do"
+puts "0. Create a shortened URL"
+puts "1. Visit a shortened URL"
+
+choice = gets.chomp.to_i
+
+case choice
+when 0
+  puts "Please enter the long URL you wish to shorten."
+  long_url = gets.chomp
+  short_url = ShortenedUrl.generate_short_url(user, long_url)
+  puts "Your shortened URL is aa.io/#{short_url}."
+when 1
+  puts "Please enter the short URL you wish to visit."
+  short_url = gets.chomp
+  hash = short_url.split("/")[1]
+  short_url_object = ShortenedUrl.find_by(short_url: hash)
+  Visit.record_visit!(user, short_url_object)
+  long_url = short_url_object.long_url
+  Launchy.open(long_url)
+  puts "#{long_url} has been launched!"
+end
